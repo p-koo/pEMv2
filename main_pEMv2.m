@@ -1,32 +1,34 @@
 clear all;
 clc;
 close all;
-addpath('pEM');
+addpath('pEMv2');
 
 %%  load file
 
-[filename dirpath] = uigetfile('*.mat','Select protein track positions mat file');
+[filename,dirpath] = uigetfile('*.mat','Select protein track positions mat file');
 data = load(fullfile(dirpath,filename));
 Xraw = data.X;
-
 
 %% user set parameters
 
 % movie parameters
-dt = .032;
-dE = .032;
+dt = .032;              % time between steps
+dE = .032;              % exposure time
 
 % pEM parameters
 minStates = 3;          % minimum number of states to explore
 maxStates = 5;          % maximum number of states to explore
-numReinitialize = 3;
-numPerturb = 5;        % number of perturbation trials
+numReinitialize = 3;    % number of reinitialization trials
+numPerturb = 5;         % number of perturbation trials
 maxiter = 10000;        % maximum number of iterations within EM trial
 convergence = 1e-7;     % convergence criteria for change in log-likelihood 
-lambda = 0.00;
+lambda = 0.00;          % shrinkage factor (useful when numerical issues calculating
+                        % inverse of covariance matrix, labmda = 0.0 for no correction 
+                        % lambda = 0.01 for correction)
 
-numFeatures = 2;
-splitLength = 10;
+numFeatures = 3;        % number of covariance features to include (min=2 for
+                        % normal diffusion, 3-5 for non-normal diffusion)
+splitLength = 20;       % length of steps to split each track
 
 %% run pEM version 2
 
