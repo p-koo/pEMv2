@@ -66,8 +66,7 @@ params.verbose = 1;                     % display progress on command window (0,
 % run pEMv2 
 results = pEMv2_SPT(X,trackInfo,params); 
 
-%% display results
-
+% display results
 optimalSize = results.optimalSize;
 optimalVacf = results.optimalVacf;
 optimalP = results.optimalP;
@@ -79,9 +78,16 @@ end
 disp(['pi_k: ' num2str(optimalP)]);
 disp('-------------------------------------------------------');
 
+% save results
+saveFolder = 'Results';
+if ~isdir(saveFolder)
+    mkdir(saveFolder)
+end
+[tmp, name] = fileparts(filename);
+disp(['Saving results: Results/' name '.mat']); 
+save(fullfile(saveFolder,[name '.mat']),'results');
 
 %%
-
 
 
 
