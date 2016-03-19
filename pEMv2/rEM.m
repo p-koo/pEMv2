@@ -20,7 +20,6 @@ logLmax = zeros(numTrial,1);
 trial = struct([]);
 
 % reinitialization EM trials
-disp('-------------------------------------------------------');
 for i = 1:numTrial
     disp(['EM trial #' num2str(i)]);
 

@@ -1,8 +1,9 @@
 function markovStateSeq = SimulateMarkovState(numTracks,N,Pindex,A)
 
-Nindex = round(numTracks*Pindex);
-numStates = size(A,2);
 
+% generate initial markov state
+Nindex = round(numTracks*Pindex); 
+numStates = size(A,2);
 initialState = [];
 for i = 1:numStates
     initialState = [initialState ones(1,Nindex(i))*i];
@@ -12,15 +13,17 @@ if length(initialState) < numTracks
 end
 initialMarkovState = initialState;
 
-% map transition probabilities onto uniform distribution
+% map transition probabilities onto cumulative distribution
 transitionCum = cumsum(A,2);
 
 % underlying markov markovState sequences
 markovStateSeq = cell(numTracks,1); 
 for z = 1:numTracks
+    
     % simulate transition probabilities for each protein trajectory
     markovStateChange = rand(N,1);
 
+    % 
     markovState = zeros(N,1);
     markovState(1) = initialMarkovState(z);
     for t = 2:N

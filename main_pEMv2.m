@@ -1,3 +1,12 @@
+%--------------------------------------------------------------------------
+% This script calculates the expectation step: the posterior probabilities
+% and the log-likelihood given the model parameters
+% 
+% Code written by: 
+%       Peter Koo
+%       Yale University, Department of Physis, New Haven, CT, 06511  
+%--------------------------------------------------------------------------
+
 clear all;
 clc;
 close all;
@@ -54,7 +63,8 @@ params.converged = convergence;         % convergence condition for EM
 params.maxiter = maxiter;               % maximum number of iterations for EM
 params.verbose = 1;                     % display progress on command window (0,1)
 
-results = pEM_SPT(X,trackInfo,params); 
+% run pEMv2 
+results = pEMv2_SPT(X,trackInfo,params); 
 
 %% display results
 
@@ -62,8 +72,10 @@ optimalSize = results.optimalSize;
 optimalVacf = results.optimalVacf;
 optimalP = results.optimalP;
 disp('-------------------------------------------------------');
-disp(['OptimalSize: ' num2str(optimalSize)]);
-disp(['D_k: ' num2str((optimalVacf(:,1) + 2*optimalVacf(:,2))'/2/dt)]);
+disp(['OptimalSize: ' num2str(optimalSize) ' states']);
+for i = 1:numFeatures
+    disp(['Sigma_k(i,i+' num2str(i-1) '): ' num2str(optimalVacf(:,i)') ' um^2']);
+end
 disp(['pi_k: ' num2str(optimalP)]);
 disp('-------------------------------------------------------');
 

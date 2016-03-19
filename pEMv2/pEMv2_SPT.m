@@ -29,6 +29,7 @@ end
 state = struct([]);
 BIC = zeros(maxStates,1); 
 for numStates = minStates:maxStates
+    disp('-------------------------------------------------------');
     disp([num2str(numStates) ' state model']);
 
     % random initialization
@@ -40,19 +41,20 @@ for numStates = minStates:maxStates
     % run rEM
     [baseVacf,baseP,posteriorProb,logLmax,remTrial] = rEM(deltaX,vacf0,P0,params,trackInfo);    
     if params.verbose == 1
-        disp(['rEM: ' num2str((baseVacf(:,1) + 2*baseVacf(:,2))'/2/dt)]);
+        disp(['rEM log-likelihood: ' num2str(logLmax)]);
     end
     
     % run pEM
     [baseVacf,baseP,posteriorProb,logLmax,pemTrial] = pEM(deltaX,baseVacf,baseP,params,trackInfo);
     if params.verbose == 1
-        disp(['pEM: ' num2str((baseVacf(:,1) + 2*baseVacf(:,2))'/2/dt)]);
+        disp(['pEM log-likelihood: ' num2str(logLmax)]);
     end
     
     % calculate BIC
     nparams = numStates + numStates*trackInfo.numFeatures; 
     BIC(numStates) = logLmax/2 - nparams/2*log(numData);
-    
+    disp(['BIC: ' num2str(BIC(numStates))]);
+
     % store results
     state(numStates).numberOfStates = numStates;
     state(numStates).BIC = BIC(numStates);
@@ -63,7 +65,7 @@ for numStates = minStates:maxStates
     state(numStates).remTrial = remTrial;
     state(numStates).pemTrial = pemTrial;
     
-    if BIC(numStates) < max(BIC(numStates))
+    if BIC(numStates) < max(BIC)
         break;
     end
 end
