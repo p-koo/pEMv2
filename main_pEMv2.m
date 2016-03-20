@@ -47,21 +47,22 @@ splitLength = 20;       % length of steps to split each track
 % structure for track info
 trackInfo.numberOfTracks = length(X);   % number of tracks
 trackInfo.dimensions = size(X{1},2);    % particle track dimensions
-trackInfo.numFeatures = numFeatures;
-trackInfo.splitLength = splitLength;
+trackInfo.numFeatures = numFeatures;    % number of features to retain in covariance matrix
+trackInfo.splitLength = splitLength;    % length of each bin
+trackInfo.splitIndex = splitIndex;      % index of each track
 trackInfo.dt = dt;                      % frame duration
 trackInfo.R = 1/6*dE/dt;                % motion blur coefficient
-trackInfo.lambda = lambda;
+trackInfo.lambda = lambda;              % shrinkage factor
 
 % structure for pEM
-params.minStates = minStates;
-params.maxStates = maxStates;
-params.numFeatures = numFeatures;
-params.numReinitialize = numReinitialize;
-params.numPerturbation = numPerturb;    % number of perturbations trials
-params.converged = convergence;         % convergence condition for EM
-params.maxiter = maxiter;               % maximum number of iterations for EM
-params.verbose = 1;                     % display progress on command window (0,1)
+params.minStates = minStates;               % minimum number of states to try
+params.maxStates = maxStates;               % maximum number of states to try
+params.numFeatures = numFeatures;           % number of features in covariance elements
+params.numReinitialize = numReinitialize;   % number of reinitialization trials
+params.numPerturbation = numPerturb;        % number of perturbations trials
+params.converged = convergence;             % convergence condition for EM
+params.maxiter = maxiter;                   % maximum number of iterations for EM
+params.verbose = 1;                         % display progress on command window (0,1)
 
 % run pEMv2 
 results = pEMv2_SPT(X,trackInfo,params); 
