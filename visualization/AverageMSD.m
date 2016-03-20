@@ -1,5 +1,12 @@
 function [stateMSD,stateMSDerror,stateN] = AverageMSD(X,stateIndex,numLags)
-
+%--------------------------------------------------------------------------
+% This function calculates the average MSD and the standard deviation of 
+% each diffusive state based on the stateIndex.
+%
+% Code written by: 
+%       Peter Koo
+%       Yale University, Department of Physis, New Haven, CT, 06511  
+%--------------------------------------------------------------------------
 numStates = max(stateIndex);
 stateMSD = zeros(numStates,numLags);
 stateMSDerror = zeros(numStates,numLags);

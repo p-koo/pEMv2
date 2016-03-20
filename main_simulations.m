@@ -1,24 +1,35 @@
+%--------------------------------------------------------------------------
+% This script generates simulated particle tracks undergoing transitions
+% with static and dynamic localization noise, based on the parameters that
+% the user selects.  
+% 
+% Code written by: 
+%       Peter Koo
+%       Yale University, Department of Physis, New Haven, CT, 06511  
+%--------------------------------------------------------------------------
+
 clear all;
 clc;
 close all;
+addpath('simulations');
 
 %% Simulate particle tracks that transition between different diffuison modes
 
 filename = 'my_simulation';     % output .mat file that stores tracks
-numTracks = 100;               % number of particle tracks
-N = 60;                        % length of particle tracks
+numTracks = 1000;               % number of particle tracks
+N = 60;                         % length of particle tracks
 dt = .032;                      % time between steps
 numSubSteps = 22;               % number of micro-steps
 
-Dindex = [.05 .15 .25 .4];      % diffusion coefficients (um^s/s)
-Sindex = [.04 .04 .04 .04];     % static localization noise (um)
-Lindex = [.13 0 0 0];           % confinement size (um)
-LnoiseIndex = [.01 0 0 0];      % confinement size variability (um)
-Vindex = [0  0  0 0];           % drift velocity (um/s)
-Pindex = [.25 .25 .35 .15];     % population fraction
-Aindex = [1  1  1 .6];         % anomalous exponents (note fBM takes a long time to simulate)
+Dindex = [.05 .2 .4];      % diffusion coefficients (um^s/s)
+Sindex = [.04 .04 .04];     % static localization noise (um)
+Lindex = [.13 0 0];           % confinement size (um)
+LnoiseIndex = [.01 0 0];      % confinement size variability (um)
+Vindex = [0 0 0];           % drift velocity (um/s)
+Pindex = [.25 .35 .15];     % population fraction
+Aindex = [1  1  .6];        % anomalous exponents (note fBM takes a long time to simulate)
 
-diagA = .97;                    % transition matrix - diagonal terms
+diagA = .985;              % transition matrix - diagonal terms
 uniformA = 1;
 if uniformA == 1
     % diagonal elements of transition matrix are same, and off diagonal
@@ -65,5 +76,9 @@ disp(['Simulating particle tracks']);
 [X,markovStateSeq] = SimulateDiffusionTransitions(simParams,numTracks,N,dt,numSubSteps);
 
 % save tracks
-disp(['Saving tracks in: ' filename '.mat']);
-save([filename '.mat'],'X','markovStateSeq','simParams');
+savepath = 'data';
+if ~isdir(savepath)
+    mkdir(savepath);
+end
+disp(['Saving tracks in: ' fullfile(savepath,[filename '.mat'])]);
+save(fullfile(savepath,[filename '.mat']),'X','markovStateSeq','simParams');

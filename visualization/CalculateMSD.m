@@ -1,4 +1,11 @@
 function msd = CalculateMSD(x,numLags)
+%--------------------------------------------------------------------------
+% This function calculates the MSD of a particle trajectory
+%
+% Code written by: 
+%       Peter Koo
+%       Yale University, Department of Physis, New Haven, CT, 06511  
+%--------------------------------------------------------------------------
 
 dim = size(x,2);
 

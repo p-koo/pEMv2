@@ -1,6 +1,10 @@
 %--------------------------------------------------------------------------
-% This script calculates the expectation step: the posterior probabilities
-% and the log-likelihood given the model parameters
+% This script runs perturbation expectation-maximization version 2 (pEMv2) 
+% on a set of simulated particle tracks. The tracks have to be stored in a 
+% mat file under the variable X, which is a cell that contains each
+% trajectory X{1} = [x_1 y_1], X{2} = [x_2, y_2]... where x_i and y_i are
+% vectors of the positions of the trajectories.  The output of pEMv2 is
+% saved in a mat file in the results folder.
 % 
 % Code written by: 
 %       Peter Koo
@@ -25,19 +29,19 @@ dt = .032;              % time between steps
 dE = .032;              % exposure time
 
 % pEM parameters
-minStates = 3;          % minimum number of states to explore
+minStates = 1;          % minimum number of states to explore
 maxStates = 5;          % maximum number of states to explore
 numReinitialize = 3;    % number of reinitialization trials
-numPerturb = 5;         % number of perturbation trials
+numPerturb = 20;        % number of perturbation trials
 maxiter = 10000;        % maximum number of iterations within EM trial
 convergence = 1e-7;     % convergence criteria for change in log-likelihood 
 lambda = 0.00;          % shrinkage factor (useful when numerical issues calculating
                         % inverse of covariance matrix, labmda = 0.0 for no correction 
                         % lambda = 0.01 for correction)
 
-numFeatures = 3;        % number of covariance features to include (min=2 for
+numFeatures = 5;        % number of covariance features to include (min=2 for
                         % normal diffusion, 3-5 for non-normal diffusion)
-splitLength = 20;       % length of steps to split each track
+splitLength = 15;       % length of steps to split each track
 
 %% run pEM version 2
 
@@ -79,16 +83,14 @@ end
 disp(['pi_k: ' num2str(optimalP)]);
 disp('-------------------------------------------------------');
 
-% save results
-saveFolder = 'Results';
+% save results in Results/filename
+[tmp, name] = fileparts(filename);
+saveFolder = fullfile('results',name);
 if ~isdir(saveFolder)
     mkdir(saveFolder)
 end
-[tmp, name] = fileparts(filename);
-disp(['Saving results: Results/' name '.mat']); 
-save(fullfile(saveFolder,[name '.mat']),'results');
-
-%%
+disp(['Saving results: ' fullfile(saveFolder,['results.mat'])]); 
+save(fullfile(saveFolder,['results.mat']),'results');
 
 
 

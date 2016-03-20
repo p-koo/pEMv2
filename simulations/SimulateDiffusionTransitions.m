@@ -1,5 +1,12 @@
 function [X,markovStateSeq] = SimulateDiffusionTransitions(simParams,numTracks,N,dt,numSubSteps)
-warning off;
+%--------------------------------------------------------------------------
+% This function generates synthetics particle trajectories based on a 
+% markov state sequence corresponding to different diffusive states. 
+%
+% Code written by: 
+%       Peter Koo
+%       Yale University, Department of Physis, New Haven, CT, 06511  
+%--------------------------------------------------------------------------
 
 % microstep times
 microtime = dt/numSubSteps;
@@ -14,7 +21,7 @@ markovStateSeq = SimulateMarkovState(numTracks,N,Pindex,A);
 % simulate diffusion with transitions + static and dynamic localization noise
 X = cell(numTracks,1);
 parfor z = 1:numTracks    % more cores the better
-
+    
     markovState = markovStateSeq{z};
 
     % initialize all true positions

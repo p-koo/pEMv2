@@ -1,4 +1,12 @@
 function [stateVACF,stateVACFerror,stateN] = AverageVACF(X,stateIndex)
+%--------------------------------------------------------------------------
+% This function calculates the average covariance structure and the
+% standard deviation of each diffusive state based on the stateIndex.
+%
+% Code written by: 
+%       Peter Koo
+%       Yale University, Department of Physis, New Haven, CT, 06511  
+%--------------------------------------------------------------------------
 
 [N,dim] = size(X{1});
 numStates = max(stateIndex);

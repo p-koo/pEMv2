@@ -1,5 +1,13 @@
 function markovStateSeq = SimulateMarkovState(numTracks,N,Pindex,A)
-
+%--------------------------------------------------------------------------
+% This function simulates a markov state sequence following the transition 
+% matrix A for length N. Pindex is the percent of tracks that start from a
+% given state.
+%
+% Code written by: 
+%       Peter Koo
+%       Yale University, Department of Physis, New Haven, CT, 06511  
+%--------------------------------------------------------------------------
 
 % generate initial markov state
 Nindex = round(numTracks*Pindex); 
