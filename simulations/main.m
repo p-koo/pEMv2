@@ -66,4 +66,4 @@ disp(['Simulating particle tracks']);
 
 % save tracks
 disp(['Saving tracks in: ' filename '.mat']);
-save([filename '.mat'],'X','markovStateSeq');
+save([filename '.mat'],'X','markovStateSeq','simParams');
