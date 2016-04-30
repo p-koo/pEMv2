@@ -1,4 +1,4 @@
-function [C2] = ShrinkCov(C,lambda)
+function C2 = ShrinkCov(C, lambda)
 %--------------------------------------------------------------------------
 % This function calculates the Ledoit-Wolf optimal shrinkage estimator for 
 % the covariance matrix. This is only necessary when inversion of the
