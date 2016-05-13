@@ -1,7 +1,7 @@
 function [p,a,b,sigma] = MaximizationHMM(splitX,gammank,est,K,trackInfo)
 
 numTracks = length(est);
-vacf_est = trackInfo.vacf;
+vacf_est = trackInfo.vacf_exp;
 D = trackInfo.splitLength-1;
 dim = trackInfo.dimensions;
 T = trackInfo.numFeatures;
@@ -10,7 +10,7 @@ lambda = trackInfo.lambda;
 % estimate transition matrix and initial state 
 p = zeros(K,numTracks); 
 Nk2 = 0; a = 0;
-for n = 1:numTracks
+for n = 1:numTracks 
 
     gamma = est(n).gamma;
     xi = est(n).xi;

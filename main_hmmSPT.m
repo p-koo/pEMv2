@@ -142,7 +142,7 @@ end
 results.hmmStateSeq = stateSeq;
 
 % calculate transition matrix
-transMatrix = zeros(numStates);
+transMatrix = zeros(optimalSize);
 for i = 1:numTracks
     seq = stateSeq{i};
     for j = 1:length(seq)-1
@@ -150,7 +150,7 @@ for i = 1:numTracks
     end
 end
 norm = sum(transMatrix,2);
-A = transMatrix./(norm*ones(1,numStates));
+A = transMatrix./(norm*ones(1, optimalSize));
 results.hmmA = A;
 
 disp(['Saving results: ' fullfile(saveFolder,'results.mat')]); 

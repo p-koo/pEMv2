@@ -60,6 +60,15 @@ trackInfo.dt = dt;                      % frame duration
 trackInfo.R = 1/6*dE/dt;                % motion blur coefficient
 trackInfo.lambda = lambda;              % shrinkage factor
 
+% structure for pEM
+params.minStates = minStates;               % minimum number of states to try
+params.maxStates = maxStates;               % maximum number of states to try
+params.numFeatures = numFeatures;           % number of features in covariance elements
+params.numReinitialize = numReinitialize;   % number of reinitialization trials
+params.numPerturbation = numPerturb;        % number of perturbations trials
+params.converged = convergence;             % convergence condition for EM
+params.maxiter = maxiter;                   % maximum number of iterations for EM
+params.verbose = 1;                         % display progress on command window (0,1)
 
 % calculate the displacements for each particle track
 deltaX = cell(trackInfo.numberOfTracks,1);
@@ -71,14 +80,9 @@ end
 [trackInfo.vacf_exp,trackInfo.xbar_exp] = CovarianceProperties(deltaX,numFeatures);
 
 % run pEMv2 
-%results = pEMv2_SPT(deltaX,trackInfo,params); 
+results = pEMv2_SPT(deltaX,trackInfo,params); 
 
-% load pEMv2 results
-[tmp, name] = fileparts(filename);
-saveFolder = fullfile('results',name);
-disp(['loading results: ' fullfile(saveFolder,['results.mat'])]); 
-results = load(fullfile(saveFolder,['results.mat']),'results');
-
+% display results
 optimalSize = results.optimalSize;
 optimalVacf = results.optimalVacf;
 optimalP = results.optimalP;
@@ -89,6 +93,15 @@ for i = 1:numFeatures
 end
 disp(['pi_k: ' num2str(optimalP)]);
 disp('-------------------------------------------------------');
+
+% save results in Results/filename
+[tmp, name] = fileparts(filename);
+saveFolder = fullfile('results',name);
+if ~isdir(saveFolder)
+    mkdir(saveFolder)
+end
+disp(['Saving results: ' fullfile(saveFolder,['results.mat'])]); 
+save(fullfile(saveFolder,['results.mat']),'results');
 
 % train HMM
 hmmparams.pik = optimalP;
@@ -142,6 +155,5 @@ results.hmmA = A;
 
 disp(['Saving results: ' fullfile(saveFolder,'results.mat')]); 
 save(fullfile(saveFolder,'results.mat'),'results');
-
 
 

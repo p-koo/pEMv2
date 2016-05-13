@@ -6,7 +6,7 @@ function [alpha,beta,scale] = ForwardBackward(p,a,b)
 alpha = zeros(K,T);
 beta = zeros(K,T);
 scale = zeros(1,T);
-
+ 
 % scaled forward recursion
 alpha(:,1) = p.*b(:,1); 
 scale(1) = 1;
