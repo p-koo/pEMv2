@@ -1,4 +1,6 @@
-function hmmmodel = HMMGMM(splitX, hmmmodel, trackInfo, params)
+function hmmmodel = HMMGMM(deltaX, trackInfo, params)
+
+hmmmodel = InitializeHMM(deltaX, params.pik, params.vacfk, params.transProb);
 
 maxiter = params.maxiter;
 tolerance = params.tolerance;
@@ -27,7 +29,7 @@ for i = 1:maxiter
     disp([num2str(i) ': ' num2str(Lnew)]);
 
     % maximization step
-    [p,a,b,sigma] = MaximizationHMM(splitX,gammank,est,K,trackInfo);
+    [p,a,b,sigma] = MaximizationHMM(deltaX,gammank,est,K,trackInfo);
     
     % check percentage similar
     [MAX,index] = max(gammank,[],2);

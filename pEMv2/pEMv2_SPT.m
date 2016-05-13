@@ -1,4 +1,4 @@
-function  results = pEMv2_SPT(X,trackInfo,params)
+function  results = pEMv2_SPT(deltaX,trackInfo,params)
 %--------------------------------------------------------------------------
 % This function runs pEMv2 on a set of particle tracks, X: rEM and then pEM
 % to uncover the number of diffusive states and their properties, i.e.
@@ -12,18 +12,8 @@ function  results = pEMv2_SPT(X,trackInfo,params)
 
 minStates = params.minStates;
 maxStates = params.maxStates;
-numFeatures = params.numFeatures;
 dt = trackInfo.dt;
-numData = length(X)*(length(X{1})-1);
-
-% calculate the displacements for each particle track
-deltaX = cell(trackInfo.numberOfTracks,1);
-for i = 1:trackInfo.numberOfTracks
-    deltaX{i} = diff(X{i});
-end
-
-% calculate relevant properties to enhance compuatational time
-[trackInfo.vacf_exp,trackInfo.xbar_exp] = CovarianceProperties(deltaX,numFeatures);
+numData = length(deltaX)*length(deltaX{1});
 
 % BIC Model Selection Loop
 state = struct([]);
@@ -72,7 +62,6 @@ end
 
 % store optimal results
 [MAX,numStates] = max(BIC);
-results.X = X;
 results.params = params;
 results.trackInfo = trackInfo;
 results.state = state;

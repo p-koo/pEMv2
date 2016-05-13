@@ -2,7 +2,7 @@ function [p,a,b,sigma] = MaximizationHMM(splitX,gammank,est,K,trackInfo)
 
 numTracks = length(est);
 vacf_est = trackInfo.vacf;
-D = trackInfo.trackLength;
+D = trackInfo.splitLength-1;
 dim = trackInfo.dimensions;
 T = trackInfo.numFeatures;
 lambda = trackInfo.lambda;
@@ -35,7 +35,7 @@ Nk = sum(gammank);
 vacf2 = zeros(K,T); 
 for k = 1:K
     for j = 1:dim
-        vacf2(k,:) = vacf2(k,:) + sum((gammank(:,k)*ones(1,T)).*(vacf_est{j}))./Nk(k);
+        vacf2(k,:) = vacf2(k,:) + sum((gammank(:,k)*ones(1,T)).*(vacf_est(:,:,j)))./Nk(k);
     end
     vacf2(k,:) = vacf2(k,:)/dim;
 end

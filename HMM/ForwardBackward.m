@@ -23,6 +23,7 @@ beta(:,T) = 1;
 for t = T-1:-1:1
     for i = 1:K
         beta(i,t) = sum(a(i,:)'.*beta(:,t+1).*b(:,t+1))/scale(t+1);
+        beta(i,t) = sum(a(i,:)'.*beta(:,t+1).*b(:,t+1))/scale(t+1);
+        
     end
 end
-

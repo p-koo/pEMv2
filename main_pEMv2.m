@@ -29,19 +29,19 @@ dt = .032;              % time between steps
 dE = .032;              % exposure time
 
 % pEM parameters
-minStates = 1;          % minimum number of states to explore
-maxStates = 5;          % maximum number of states to explore
-numReinitialize = 3;    % number of reinitialization trials
-numPerturb = 20;        % number of perturbation trials
+minStates = 3;          % minimum number of states to explore
+maxStates = 3;          % maximum number of states to explore
+numReinitialize = 1;    % number of reinitialization trials
+numPerturb = 0;        % number of perturbation trials
 maxiter = 10000;        % maximum number of iterations within EM trial
-convergence = 1e-7;     % convergence criteria for change in log-likelihood 
+convergence = 1e-5;     % convergence criteria for change in log-likelihood 
 lambda = 0.00;          % shrinkage factor (useful when numerical issues calculating
                         % inverse of covariance matrix, labmda = 0.0 for no correction 
                         % lambda = 0.01 for correction)
 
-numFeatures = 5;        % number of covariance features to include (min=2 for
+numFeatures = 4;        % number of covariance features to include (min=2 for
                         % normal diffusion, 3-5 for non-normal diffusion)
-splitLength = 15;       % length of steps to split each track
+splitLength = 5;       % length of steps to split each track
 
 %% run pEM version 2
 

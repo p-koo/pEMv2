@@ -60,19 +60,6 @@ trackInfo.dt = dt;                      % frame duration
 trackInfo.R = 1/6*dE/dt;                % motion blur coefficient
 trackInfo.lambda = lambda;              % shrinkage factor
 
-
-% calculate the displacements for each particle track
-deltaX = cell(trackInfo.numberOfTracks,1);
-for i = 1:trackInfo.numberOfTracks
-    deltaX{i} = diff(X{i});
-end
-
-% calculate relevant properties to enhance compuatational time
-[trackInfo.vacf_exp,trackInfo.xbar_exp] = CovarianceProperties(deltaX,numFeatures);
-
-% run pEMv2 
-%results = pEMv2_SPT(deltaX,trackInfo,params); 
-
 % load pEMv2 results
 [tmp, name] = fileparts(filename);
 saveFolder = fullfile('results',name);
@@ -97,7 +84,12 @@ hmmparams.transProb = .99;
 hmmparams.maxiter = 100;
 hmmparams.tolerance = 1e-7;
 hmmparams.verbose = 1;
-hmmmodel = HMMGMM(deltaX, trackInfo, hmmparams);
+hmmmodel = HMMGMM(X, trackInfo, hmmparams);
+
+sigma = [];
+for i = 1:size(hmmmodel.sigma,3)
+    sigma = [sigma;hmmmodel.sigma(1,:,i)];
+end
 
 % store HMM results
 results.hmm.p = hmmmodel.p;
@@ -107,41 +99,33 @@ results.hmm.sigma = hmmmodel.sigma;
 results.hmm.gammank = hmmmodel.gammank;
 results.hmm.logL = hmmmodel.logL;
 
-sigma = [];
-for i = 1:optimalSize
-    sigma = [sigma; hmmmodel.sigma(1,:,i)];
-end
-results.hmmVacf = sigma;
+disp(['Saving results: ' fullfile(saveFolder,'results.mat')]); 
+save(fullfile(saveFolder,'results.mat'),'results');
+
 
 % get the state of each position
 numTracks = splitIndex(end);
 [MAX, state] = max(hmmmodel.gammank, [], 2);
-stateSeq = cell(numTracks,1);
+stateseq = cell(numTracks,1);
 k = 1;
 for i = 1:numTracks
     index = find(splitIndex == i);
-    stateSeq{i} = [];
+    stateseq{i} = [];
     for j = 1:length(index)
-        stateSeq{i} = [stateSeq{i}; ones(splitLength,1)*state(k)];
+        stateseq{i} = [stateseq{i}; ones(splitLength,1)*state(k)];
         k = k + 1;
     end
 end
-results.hmmStateSeq = stateSeq;
 
 % calculate transition matrix
 transMatrix = zeros(numStates);
 for i = 1:numTracks
-    seq = stateSeq{i};
+    seq = stateseq{i};
     for j = 1:length(seq)-1
         transMatrix(seq(j),seq(j+1)) = transMatrix(seq(j),seq(j+1)) + 1;
     end
 end
 norm = sum(transMatrix,2);
 A = transMatrix./(norm*ones(1,numStates));
-results.hmmA = A;
-
-disp(['Saving results: ' fullfile(saveFolder,'results.mat')]); 
-save(fullfile(saveFolder,'results.mat'),'results');
-
 
 

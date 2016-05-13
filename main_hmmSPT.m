@@ -70,8 +70,17 @@ params.converged = convergence;             % convergence condition for EM
 params.maxiter = maxiter;                   % maximum number of iterations for EM
 params.verbose = 1;                         % display progress on command window (0,1)
 
+% calculate the displacements for each particle track
+deltaX = cell(trackInfo.numberOfTracks,1);
+for i = 1:trackInfo.numberOfTracks
+    deltaX{i} = diff(X{i});
+end
+
+% calculate relevant properties to enhance compuatational time
+[trackInfo.vacf_exp,trackInfo.xbar_exp] = CovarianceProperties(deltaX,numFeatures);
+
 % run pEMv2 
-results = pEMv2_SPT(X,trackInfo,params); 
+results = pEMv2_SPT(deltaX,trackInfo,params); 
 
 % display results
 optimalSize = results.optimalSize;
@@ -94,26 +103,57 @@ end
 disp(['Saving results: ' fullfile(saveFolder,['results.mat'])]); 
 save(fullfile(saveFolder,['results.mat']),'results');
 
-% initialize HMM
-transProb = .99;  % diagional transition probabilities
-optimalP = results.optimalP;
-optimalVacf = results.optimalVacf;
-hmmmodel = InitializeHMM(X, optimalP, optimalVacf, transProb);
-
 % train HMM
+hmmparams.pik = optimalP;
+hmmparams.vacfk = optimalVacf;
+hmmparams.transProb = .99;
 hmmparams.maxiter = 100;
-hmmparams.tolerance = 1e-4;
+hmmparams.tolerance = 1e-7;
 hmmparams.verbose = 1;
-hmmmodel = HMMGMM(X, hmmmodel, trackInfo, hmmparams);
+hmmmodel = HMMGMM(deltaX, trackInfo, hmmparams);
 
 % store HMM results
-results.hmm.p = hmmmodel.p;  % initial state vector (for each track)
-results.hmm.a = hmmmodel.a;  % transition matrix
-results.hmm.b = hmmmodel.b;  % emission matrix
-results.hmm.sigma = hmmmodel.sigma; % covariance matrix for each state
-results.hmm.gammank = hmmmodel.gammank; % posterior probabiity
-results.hmm.logL = hmmmodel.logL;  % log-likelihood values
+results.hmm.p = hmmmodel.p;
+results.hmm.a = hmmmodel.a;
+results.hmm.b = hmmmodel.b;
+results.hmm.sigma = hmmmodel.sigma;
+results.hmm.gammank = hmmmodel.gammank;
+results.hmm.logL = hmmmodel.logL;
 
-disp(['Saving results: ' fullfile(saveFolder,['results.mat'])]); 
-save(fullfile(saveFolder,['results.mat']),'results');
+sigma = [];
+for i = 1:optimalSize
+    sigma = [sigma; hmmmodel.sigma(1,:,i)];
+end
+results.hmmVacf = sigma;
+
+% get the state of each position
+numTracks = splitIndex(end);
+[MAX, state] = max(hmmmodel.gammank, [], 2);
+stateSeq = cell(numTracks,1);
+k = 1;
+for i = 1:numTracks
+    index = find(splitIndex == i);
+    stateSeq{i} = [];
+    for j = 1:length(index)
+        stateSeq{i} = [stateSeq{i}; ones(splitLength,1)*state(k)];
+        k = k + 1;
+    end
+end
+results.hmmStateSeq = stateSeq;
+
+% calculate transition matrix
+transMatrix = zeros(numStates);
+for i = 1:numTracks
+    seq = stateSeq{i};
+    for j = 1:length(seq)-1
+        transMatrix(seq(j),seq(j+1)) = transMatrix(seq(j),seq(j+1)) + 1;
+    end
+end
+norm = sum(transMatrix,2);
+A = transMatrix./(norm*ones(1,numStates));
+results.hmmA = A;
+
+disp(['Saving results: ' fullfile(saveFolder,'results.mat')]); 
+save(fullfile(saveFolder,'results.mat'),'results');
+
 

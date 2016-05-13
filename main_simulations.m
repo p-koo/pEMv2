@@ -21,13 +21,13 @@ N = 60;                         % length of particle tracks
 dt = .032;                      % time between steps
 numSubSteps = 22;               % number of micro-steps
 
-Dindex = [.05 .2 .4];      % diffusion coefficients (um^s/s)
+Dindex = [.05 .2 .7];      % diffusion coefficients (um^s/s)
 Sindex = [.04 .04 .04];     % static localization noise (um)
 Lindex = [.13 0 0];           % confinement size (um)
 LnoiseIndex = [.01 0 0];      % confinement size variability (um)
 Vindex = [0 0 0];           % drift velocity (um/s)
 Pindex = [.25 .35 .15];     % population fraction
-Aindex = [1  1  .6];        % anomalous exponents (note fBM takes a long time to simulate)
+Aindex = [1  1  1];        % anomalous exponents (note fBM takes a long time to simulate)
 
 diagA = .985;              % transition matrix - diagonal terms
 uniformA = 1;
