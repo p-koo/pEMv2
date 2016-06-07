@@ -1,4 +1,11 @@
 function [alpha,beta,scale] = ForwardBackward(p,a,b)
+%---------------------------------------------------------
+% This function calculates the forward and backward variables.
+%
+% Code written by:
+%	Peter Koo
+%	Yale University, Department of Physics, New Haven, CT, 06511
+%---------------------------------------------------------
 
 [K,T] = size(b);
 

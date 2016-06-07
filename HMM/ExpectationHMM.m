@@ -1,5 +1,13 @@
 function [est,L,gammank] = ExpectationHMM(p,a,b,splitIndex)
-
+%-------------------------------------------------------------
+% This function runs the expectation step for the HMMs.  
+% Specifically, the forward and backward variables are calculated
+% as well as the sufficient statistics for the state probabilities.
+% 
+%	Code written by:
+% 		Peter Koo
+%		Yale University, Department of Physics, New Haven, CT, 06511
+%-------------------------------------------------------------
 numTracks = splitIndex(end);
 
 gammank = [];

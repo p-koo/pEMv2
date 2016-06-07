@@ -1,17 +1,28 @@
 function hmmmodel = HMMGMM(deltaX, trackInfo, params)
+%--------------------------------------------------------------------
+% This function runs the Hidden Markov Models of multivariate Gaussians
+% to analyze a collection of single particle trajectories for a given
+% model size.
+%
+% Code written by:
+%	Peter Koo
+% 	Yale University, Department of Physics, New Haven, CT, 06511
+%--------------------------------------------------------------------
 
+% initialize the HMM
 hmmmodel = InitializeHMM(deltaX, params.pik, params.vacfk, params.transProb);
 
+% optimization parameters
 maxiter = params.maxiter;
 tolerance = params.tolerance;
 verbose = params.verbose;
 splitIndex = trackInfo.splitIndex;
 
+% model parameters
 p = hmmmodel.p;
 a = hmmmodel.a;
 b = hmmmodel.b;
 sigma = hmmmodel.sigma;
-
 K = size(a,1);
 
 pbest = p;
@@ -56,6 +67,7 @@ if i == maxiter
     end
 end
 
+% store best parameters
 hmmmodel.p = pbest;
 hmmmodel.a = abest;
 hmmmodel.b = bbest;

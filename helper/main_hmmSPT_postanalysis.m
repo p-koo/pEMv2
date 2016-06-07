@@ -1,10 +1,8 @@
 %--------------------------------------------------------------------------
-% This script runs perturbation expectation-maximization version 2 (pEMv2) 
-% on a set of simulated particle tracks. The tracks have to be stored in a 
-% mat file under the variable X, which is a cell that contains each
-% trajectory X{1} = [x_1 y_1], X{2} = [x_2, y_2]... where x_i and y_i are
-% vectors of the positions of the trajectories.  The output of pEMv2 is
-% saved in a mat file in the results folder.
+% This script loads a mat file from a perturbation expectation-maximization 
+% version 2 (pEMv2) run.  It then applies HMM analysis on the optimal states
+% to refine the paramters as well as to introduce a transition matrix, which
+% reduces the number of spurious transitions.   
 % 
 % Code written by: 
 %       Peter Koo
@@ -14,9 +12,9 @@
 clear all;
 clc;
 close all;
-addpath('pEMv2');
-addpath('HMM');
-addpath('visualization')
+addpath('../pEMv2');
+addpath('../HMM');
+addpath('../visualization')
 
 %%  load file
 
@@ -90,6 +88,7 @@ end
 disp(['pi_k: ' num2str(optimalP)]);
 disp('-------------------------------------------------------');
 
+
 % train HMM
 hmmparams.pik = optimalP;
 hmmparams.vacfk = optimalVacf;
@@ -129,7 +128,7 @@ end
 results.hmmStateSeq = stateSeq;
 
 % calculate transition matrix
-transMatrix = zeros(numStates);
+transMatrix = zeros(optimalSize);
 for i = 1:numTracks
     seq = stateSeq{i};
     for j = 1:length(seq)-1
@@ -137,11 +136,10 @@ for i = 1:numTracks
     end
 end
 norm = sum(transMatrix,2);
-A = transMatrix./(norm*ones(1,numStates));
+A = transMatrix./(norm*ones(1, optimalSize));
 results.hmmA = A;
 
 disp(['Saving results: ' fullfile(saveFolder,'results.mat')]); 
 save(fullfile(saveFolder,'results.mat'),'results');
-
 
 

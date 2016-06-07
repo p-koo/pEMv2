@@ -1,4 +1,12 @@
 function [p,a,b,sigma] = MaximizationHMM(splitX,gammank,est,K,trackInfo)
+%-----------------------------------------------------------------------
+% This function runs the maximization step of the EM algo for HMMs of 
+% multivariate Guassians.  
+%
+% Code written by:
+% 	Peter Koo
+% 	Yale University, Department of Physics, New Haven, CT, 06511
+%-----------------------------------------------------------------------
 
 numTracks = length(est);
 vacf_est = trackInfo.vacf_exp;

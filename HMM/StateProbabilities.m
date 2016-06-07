@@ -1,4 +1,13 @@
 function [gamma,xi,logL] = StateProbabilities(a,b,alpha,beta,scale)
+%------------------------------------------------------------------------
+% This function calculates the sufficient statistics of HMMs with the 
+% HMM parameters from the expectation and maximization steps. These 
+% statistics facilitate the calculation in the maximization step.
+%
+% Code written by:
+% 	Peter Koo
+%	Yale University, Department of Physics, New Haven, CT, 06511
+%------------------------------------------------------------------------
 
 [K,T] = size(b);
 

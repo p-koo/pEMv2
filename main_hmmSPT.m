@@ -3,8 +3,11 @@
 % on a set of simulated particle tracks. The tracks have to be stored in a 
 % mat file under the variable X, which is a cell that contains each
 % trajectory X{1} = [x_1 y_1], X{2} = [x_2, y_2]... where x_i and y_i are
-% vectors of the positions of the trajectories.  The output of pEMv2 is
-% saved in a mat file in the results folder.
+% vectors of the positions of the trajectories.  The results are then fed
+% into a HMM of multivariate Gaussians to refine the estimates and also to
+% introduce a transition matrix, which the HMM learns, resulting in less
+% spurious transitions.  The output of pEMv2 is saved in a mat file in the 
+% results folder.
 % 
 % Code written by: 
 %       Peter Koo
@@ -139,6 +142,18 @@ for i = 1:numTracks
         k = k + 1;
     end
 end
+
+numTracks = splitIndex(end);
+pos = cell(numTracks,1);
+for i = 1:numTracks
+    index = find(splitIndex == i);
+    pos{i} = [];
+    for j = 1:length(index)
+        pos{i} = [pos{i}; X{j}];
+    end
+end
+
+
 results.hmmStateSeq = stateSeq;
 
 % calculate transition matrix
@@ -155,5 +170,38 @@ results.hmmA = A;
 
 disp(['Saving results: ' fullfile(saveFolder,'results.mat')]); 
 save(fullfile(saveFolder,'results.mat'),'results');
+
+
+%% plot X (line 51) and color with stateSeq (line 132)
+
+resTimes = cell(numStates,1);
+for i = 1:numStates
+    resTimes{i} = [];
+end
+
+for j = 1:length(stateSeq)
+    seq = stateSeq{j};
+    
+    i = 1;
+    laststate = seq(i);
+    counter = zeros(1,numStates);
+    while i <= length(seq)
+        if seq(i) == laststate
+            counter(laststate)=counter(laststate)+1;
+        else   
+            resTimes{laststate} = [resTimes{laststate}; counter(laststate)];
+            counter(laststate) = 0;
+            laststate = likelystates(i);
+            counter(laststate) = counter(laststate) + 1;
+        end
+        i = i + 1;
+    end
+    resTimes{laststate} = [resTimes{laststate}; counter(laststate)];
+end
+
+
+
+
+
 
 
