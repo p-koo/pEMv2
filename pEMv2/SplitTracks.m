@@ -1,4 +1,4 @@
-function [splitX,splitIndex] = SplitTracks(X,splitLength)
+function [splitX,deltaX,splitIndex] = SplitTracks(X,splitLength)
 %--------------------------------------------------------------------------
 % This function splits the tracks into bins of equal lengths.  Any remainder
 % is not included. The index where the tracks came from is saved in
@@ -24,6 +24,7 @@ for i = 1:length(X)
 
             if range(end) <= N    
                 splitX{n} = X{i}(range,:);
+                deltaX{n} = diff(splitX{n});
                 splitIndex = [splitIndex; counter];
                 k = k + 1;
                 n = n + 1;

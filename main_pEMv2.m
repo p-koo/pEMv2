@@ -29,10 +29,10 @@ dt = .032;              % time between steps
 dE = .032;              % exposure time
 
 % pEM parameters
-minStates = 3;          % minimum number of states to explore
-maxStates = 3;          % maximum number of states to explore
+minStates = 2;          % minimum number of states to explore
+maxStates = 5;          % maximum number of states to explore
 numReinitialize = 1;    % number of reinitialization trials
-numPerturb = 0;        % number of perturbation trials
+numPerturb = 5;        % number of perturbation trials
 maxiter = 10000;        % maximum number of iterations within EM trial
 convergence = 1e-5;     % convergence criteria for change in log-likelihood 
 lambda = 0.00;          % shrinkage factor (useful when numerical issues calculating
@@ -46,7 +46,10 @@ splitLength = 5;       % length of steps to split each track
 %% run pEM version 2
 
 % split tracks into equal bin sizes
-[X,splitIndex] = SplitTracks(Xraw,splitLength);
+[X,deltaX,splitIndex] = SplitTracks(Xraw,splitLength);
+
+%  calculate covariance properties
+[vacf_exp,xbar_exp] = CovarianceProperties(deltaX,numFeatures);
 
 % structure for track info
 trackInfo.numberOfTracks = length(X);   % number of tracks
@@ -57,6 +60,8 @@ trackInfo.splitIndex = splitIndex;      % index of each track
 trackInfo.dt = dt;                      % frame duration
 trackInfo.R = 1/6*dE/dt;                % motion blur coefficient
 trackInfo.lambda = lambda;              % shrinkage factor
+trackInfo.vacf_exp = vacf_exp;
+
 
 % structure for pEM
 params.minStates = minStates;               % minimum number of states to try
@@ -69,7 +74,7 @@ params.maxiter = maxiter;                   % maximum number of iterations for E
 params.verbose = 1;                         % display progress on command window (0,1)
 
 % run pEMv2 
-results = pEMv2_SPT(X,trackInfo,params); 
+results = pEMv2_SPT(deltaX,trackInfo,params); 
 
 % display results
 optimalSize = results.optimalSize;
