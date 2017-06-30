@@ -46,10 +46,7 @@ splitLength = 5;       % length of steps to split each track
 %% run pEM version 2
 
 % split tracks into equal bin sizes
-[X,deltaX,splitIndex] = SplitTracks(Xraw,splitLength);
-
-%  calculate covariance properties
-[vacf_exp,xbar_exp] = CovarianceProperties(deltaX,numFeatures);
+[X,splitIndex] = SplitTracks(Xraw,splitLength);
 
 % structure for track info
 trackInfo.numberOfTracks = length(X);   % number of tracks
@@ -60,7 +57,6 @@ trackInfo.splitIndex = splitIndex;      % index of each track
 trackInfo.dt = dt;                      % frame duration
 trackInfo.R = 1/6*dE/dt;                % motion blur coefficient
 trackInfo.lambda = lambda;              % shrinkage factor
-trackInfo.vacf_exp = vacf_exp;
 
 
 % structure for pEM
@@ -72,6 +68,16 @@ params.numPerturbation = numPerturb;        % number of perturbations trials
 params.converged = convergence;             % convergence condition for EM
 params.maxiter = maxiter;                   % maximum number of iterations for EM
 params.verbose = 1;                         % display progress on command window (0,1)
+
+
+% calculate the displacements for each particle track
+deltaX = cell(trackInfo.numberOfTracks,1);
+for i = 1:trackInfo.numberOfTracks
+    deltaX{i} = diff(X{i});
+end
+
+% calculate relevant properties to enhance compuatational time
+[trackInfo.vacf_exp,trackInfo.xbar_exp] = CovarianceProperties(deltaX,numFeatures);
 
 % run pEMv2 
 results = pEMv2_SPT(deltaX,trackInfo,params); 
