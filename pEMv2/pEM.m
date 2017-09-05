@@ -52,7 +52,7 @@ for j = 1:params.numPerturbation
         baseP = P_est;
         basegamma = gamma_est;
         logLmax = logL(end);
-
+        disp(['    logL: ' num2str(logLmax)])
         trial(i).vacf_est2 = vacf_est;
         trial(i).P_est2 = P_est;
         trial(i).gamma_est2 = gamma_est;

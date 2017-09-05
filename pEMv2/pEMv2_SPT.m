@@ -17,16 +17,13 @@ numData = length(deltaX)*length(deltaX{1});
 
 % BIC Model Selection Loop
 state = struct([]);
-BIC = zeros(maxStates,1); 
+BIC = ones(maxStates,1)*-1e10; 
 for numStates = minStates:maxStates
     disp('-------------------------------------------------------');
     disp([num2str(numStates) ' state model']);
 
     % random initialization
     [vacf0,P0] = RandomInitialization(numStates,trackInfo.vacf_exp,1);
-    if params.verbose == 1
-        disp(['Initial Guess: ' num2str((vacf0(:,1) + 2*vacf0(:,2))'/2/dt)]);
-    end
     
     % run rEM
     [baseVacf,baseP,posteriorProb,logLmax,remTrial] = rEM(deltaX,vacf0,P0,params,trackInfo);    

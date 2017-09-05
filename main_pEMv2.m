@@ -22,27 +22,35 @@ addpath('pEMv2');
 data = load(fullfile(dirpath,filename));
 Xraw = data.X;
 
+% get only one dimensional tracks
+X_new = cell(length(X_raw), 1);
+for i=1:length(X_raw)
+    X_new{i} = X_raw{i}(:,1);
+end
+X = X_new;
+
+
 %% user set parameters
 
 % movie parameters
-dt = .032;              % time between steps
-dE = .032;              % exposure time
+dt = .025;              % time between steps
+dE = .025;              % exposure time
 
 % pEM parameters
 minStates = 2;          % minimum number of states to explore
-maxStates = 5;          % maximum number of states to explore
-numReinitialize = 1;    % number of reinitialization trials
-numPerturb = 5;        % number of perturbation trials
+maxStates = 6;          % maximum number of states to explore
+numReinitialize = 3;    % number of reinitialization trials
+numPerturb = 30;        % number of perturbation trials
 maxiter = 10000;        % maximum number of iterations within EM trial
 convergence = 1e-5;     % convergence criteria for change in log-likelihood 
 lambda = 0.00;          % shrinkage factor (useful when numerical issues calculating
                         % inverse of covariance matrix, labmda = 0.0 for no correction 
                         % lambda = 0.01 for correction)
 
-numFeatures = 4;        % number of covariance features to include (min=2 for
-                        % normal diffusion, 3-5 for non-normal diffusion)
-splitLength = 5;       % length of steps to split each track
 
+splitLength = 6;                   % length of steps to split each track
+numFeatures = splitLength-1;        % number of covariance features to include (min=2 for
+                                    % normal diffusion, 3-5 for non-normal diffusion)
 %% run pEM version 2
 
 % split tracks into equal bin sizes
@@ -104,12 +112,38 @@ disp(['Saving results: ' fullfile(saveFolder,['results.mat'])]);
 save(fullfile(saveFolder,['results.mat']),'results');
 
 
+%%  Fit covariance matrices with theoretical models 
+
+addpath('CovarianceModels');
+
+gamma= results.posteriorProb;
+[argvalue, argmax] = max(gamma');
+
+params.dt = dt;
+params.R = 1/6*dE/dt;
+
+method = 'other';
+models = {'normal', 'confined', 'fBM'};
+states = struct;
+for j = 1:optimalSize
+    disp(['state ' int2str(j)])
+    C_exp = toeplitz(optimalVacf(j,:));
+    params.D0 = (C_exp(1,1) + 2*C_exp(1,2))/(2*dt);
+    params.sigma0 = sqrt(abs(C_exp(1,1)/2 - params.D0*dt*(1-2*params.R)));
+    params.L0 = params.D0*5;
+    params.A0 = 1;
+    states(j).fit = struct;
+    for i = 1:length(models)
+        [p, loss] = OptimalParameters(C_exp, models{i}, params);
+        states(j).fit(i).name = models(i);
+        states(j).fit(i).p = p;
+        states(j).fit(i).loss = loss;
+        states(j).fit(i).N = length(p);
+        disp(['    model: ' models{i}]);
+        disp(['         p: ' num2str(p)]);
+        disp(['         loss: ' num2str(loss)]);
+    end
+end
 
 
-
-
-
-
-
-
-
+%%

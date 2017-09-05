@@ -50,15 +50,13 @@ switch method
 
         % find which diffusivity corresponds to each random population
         % fraction
-        C1 = zeros(numStates,1);
-        for i = 1:numStates
-            C1(i) = edges(find(cumprob > Dpoints(i),1,'first'));
-        end
-        C2 = mean(vacf_base(:,2:end));
-        
         vacf0 = zeros(numStates,numFeatures); 
         for i = 1:numStates
-            vacf0(i,:) = [C1(i) C2];
+            index = find(cumprob > Dpoints(i),1,'first');
+            C1 = edges(index);
+            [vals, sort_index] = sort((vacf_base(:,1)-C1).*2, 'ascend');
+            C2 = mean(vacf_base(sort_index(1:100),2),1);
+            vacf0(i,1:2) = [C1 C2];
         end
         
     otherwise

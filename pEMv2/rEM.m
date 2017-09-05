@@ -16,13 +16,16 @@ numTrial = params.numReinitialize;
 baseVacf = zeros(numStates,numFeatures,numTrial);
 baseP = zeros(numTrial,numStates);
 basegamma = cell(numTrial);
-logLmax = zeros(numTrial,1);
+logLmax = zeros(numTrial,1); 
 trial = struct([]);
 
 % reinitialization EM trials
 for i = 1:numTrial
     disp(['EM trial #' num2str(i)]);
-
+    if params.verbose == 1
+        disp(['Initial Guess: ' num2str((vacf0(:,1) + 2*vacf0(:,2))'/2/trackInfo.dt)]);
+    end
+    
     % run em algorithm
     [vacf_est,P_est,gamma_est,logL] = EM(deltaX,vacf0,P0,params,trackInfo);
     try
@@ -37,9 +40,13 @@ for i = 1:numTrial
     trial(i).P_est = P_est;
     trial(i).gamma_est = gamma_est;
     trial(i).L = logL;
+    if params.verbose == 1
+        disp([' logL: ' num2str(logL(end))]);
+    end
     
     % reinitialize EM parameters
     [vacf0,P0] = RandomInitialization(numStates,trackInfo.vacf_exp,2);
+
     
 end
 
