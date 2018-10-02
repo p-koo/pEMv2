@@ -49,7 +49,7 @@ lambda = 0.00;          % shrinkage factor (useful when numerical issues calcula
 
 
 splitLength = 15;                   % length of steps to split each track
-numFeatures = 6; %splitLength-1;        % number of covariance features to include (min=2 for
+numFeatures = 5;        % number of covariance features to include (min=2 for
                                     % normal diffusion, 3-5 for non-normal diffusion)
 %% run pEM version 2
 
