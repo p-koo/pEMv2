@@ -1,0 +1,4 @@
+# Ignore new results from analysis
+data/
+results/
+pEMv2/results/

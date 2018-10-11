@@ -174,6 +174,7 @@ save(fullfile(saveFolder,'results.mat'),'results');
 
 %% plot X (line 51) and color with stateSeq (line 132)
 
+numStates = optimalSize;
 resTimes = cell(numStates,1);
 for i = 1:numStates
     resTimes{i} = [];

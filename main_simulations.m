@@ -26,10 +26,10 @@ Sindex = [.04 .04 .04];     % static localization noise (um)
 Lindex = [.13 0 0];           % confinement size (um)
 LnoiseIndex = [.01 0 0];      % confinement size variability (um)
 Vindex = [0 0 0];           % drift velocity (um/s)
-Pindex = [.25 .35 .15];     % population fraction
+Pindex = [.25 .35 .40];     % population fraction
 Aindex = [1  1  1];        % anomalous exponents (note fBM takes a long time to simulate)
 
-diagA = .985;              % transition matrix - diagonal terms
+diagA = 1;              % transition matrix - diagonal terms
 uniformA = 1;
 if uniformA == 1
     % diagonal elements of transition matrix are same, and off diagonal

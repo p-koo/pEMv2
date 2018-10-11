@@ -20,7 +20,7 @@ addpath('pEMv2');
 
 [filename,dirpath] = uigetfile('*.mat','Select protein track positions mat file');
 data = load(fullfile(dirpath,filename));
-Xraw = data.X;
+X_raw = data.X;
 
 % get only one dimensional tracks
 X_new = cell(length(X_raw), 1);
@@ -33,8 +33,8 @@ X = X_new;
 %% user set parameters
 
 % movie parameters
-dt = .025;              % time between steps
-dE = .025;              % exposure time
+dt = .032;              % time between steps
+dE = .032;              % exposure time
 
 % pEM parameters
 minStates = 2;          % minimum number of states to explore
@@ -48,13 +48,13 @@ lambda = 0.00;          % shrinkage factor (useful when numerical issues calcula
                         % lambda = 0.01 for correction)
 
 
-splitLength = 6;                   % length of steps to split each track
-numFeatures = splitLength-1;        % number of covariance features to include (min=2 for
+splitLength = 15;                   % length of steps to split each track
+numFeatures = 5;        % number of covariance features to include (min=2 for
                                     % normal diffusion, 3-5 for non-normal diffusion)
 %% run pEM version 2
 
 % split tracks into equal bin sizes
-[X,splitIndex] = SplitTracks(Xraw,splitLength);
+[X,splitIndex] = SplitTracks(X_raw,splitLength);
 
 % structure for track info
 trackInfo.numberOfTracks = length(X);   % number of tracks
