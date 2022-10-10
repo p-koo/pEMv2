@@ -109,6 +109,7 @@ if ~isdir(saveFolder)
     mkdir(saveFolder)
 end
 disp(['Saving results: ' fullfile(saveFolder,['results.mat'])]); 
+results.X = X;
 save(fullfile(saveFolder,['results.mat']),'results');
 
 
